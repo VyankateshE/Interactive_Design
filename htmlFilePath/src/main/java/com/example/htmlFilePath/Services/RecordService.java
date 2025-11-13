@@ -146,16 +146,13 @@ public class RecordService {
 	    ObjectMapper mapper = new ObjectMapper();
 	    JsonNode payloadNode = mapper.readTree(payloadJson);
 
-	    // ✅ NEW: support both old (array) and new (object with mapping)
 	    JsonNode mappingNode;
-	    String pageSize = "A4"; // default
-	    String orientation = "portrait"; // default
+	    String pageSize = "A4"; 
+	    String orientation = "portrait"; 
 
 	    if (payloadNode.isArray()) {
-	        // Old format
 	        mappingNode = payloadNode;
 	    } else if (payloadNode.has("mapping")) {
-	        // New format
 	        mappingNode = payloadNode.get("mapping");
 	        if (payloadNode.has("pageSize"))
 	            pageSize = payloadNode.get("pageSize").asText();
@@ -165,13 +162,11 @@ public class RecordService {
 	        throw new IllegalArgumentException("Invalid payload format. Must contain 'mapping' or be an array.");
 	    }
 
-	    // ✅ Build field mapping
 	    Map<String, JsonNode> htmlIdToJsonField = new LinkedHashMap<>();
 	    for (JsonNode obj : mappingNode) {
 	        obj.fields().forEachRemaining(entry -> htmlIdToJsonField.put(entry.getKey(), entry.getValue()));
 	    }
 
-	    // ✅ Handle optional file_name & password fields
 	    List<String> fileNameFields = new ArrayList<>();
 	    JsonNode fileNameNode = htmlIdToJsonField.get("file_name");
 	    if (fileNameNode != null) {
@@ -190,17 +185,14 @@ public class RecordService {
 	            passwordNode.forEach(n -> passwordFields.add(n.asText()));
 	    }
 
-	    // ✅ Read HTML
 	    String htmlContent = new String(htmlFile.getBytes(), StandardCharsets.UTF_8).replaceFirst("^\uFEFF", "");
 
-	    // ✅ Prepare output directory
 	    String outputDir = Mypath.getPath() + "DownloadHTMLANDPDF" + File.separator;
 	    Files.createDirectories(Path.of(outputDir));
 	    List<String> pdfPaths = new ArrayList<>();
 
 	    RestTemplate restTemplate = new RestTemplate();
 
-	    // ✅ Loop through all uploaded JSON files
 	    for (MultipartFile file : files) {
 	        JsonNode dataJson = mapper.readTree(file.getInputStream());
 	        boolean anyMatchFound = false;
@@ -309,7 +301,6 @@ public class RecordService {
 	                throw new IOException("Remote API PDF generation failed for " + fileType + ": " + e.getMessage(), e);
 	            }
 
-	            // ✅ Apply password protection if specified
 	            if (!passwordFields.isEmpty()) {
 	                StringBuilder pwBuilder = new StringBuilder();
 	                for (String pwExpr : passwordFields) {
@@ -353,20 +344,16 @@ public class RecordService {
 			return null;
 
 		try {
-			// Split into parts for nested paths like user1.table1.data[0].Amount
 			String[] parts = expression.split("\\.");
 			JsonNode currentNode = null;
 
-			// Try starting with userKey if present
 			if (normalizedFieldMap.containsKey(parts[0].toLowerCase())) {
 				currentNode = normalizedFieldMap.get(parts[0].toLowerCase());
 			}
 
-			// Traverse nested nodes if needed
 			for (int i = 1; i < parts.length && currentNode != null; i++) {
 				String part = parts[i];
 				if (part.contains("[")) {
-					// Extract field name before '['
 					String field = part.substring(0, part.indexOf("["));
 					JsonNode arrayNode = currentNode.get(field);
 
@@ -377,7 +364,6 @@ public class RecordService {
 					String[] indexes = indexPart.split(",");
 					StringBuilder valBuilder = new StringBuilder();
 
-					// Get the text value and pick indexes
 					if (arrayNode.isValueNode()) {
 						String value = arrayNode.asText().trim().replaceAll("[-_/]", "");
 						for (String idxStr : indexes) {
@@ -390,7 +376,6 @@ public class RecordService {
 						}
 						return valBuilder.toString();
 					} else if (arrayNode.isArray()) {
-						// Handle JSON arrays
 						int idx = Integer.parseInt(indexes[0].trim());
 						if (idx >= 0 && idx < arrayNode.size()) {
 							currentNode = arrayNode.get(idx);
@@ -403,7 +388,6 @@ public class RecordService {
 				}
 			}
 
-			// If it’s a direct textual node (like CUSTOMER_NAME[2,0])
 			if (currentNode == null && expression.contains("[")) {
 				String field = expression.substring(0, expression.indexOf("[")).trim().toLowerCase();
 				JsonNode node = normalizedFieldMap.get(field);
@@ -500,20 +484,15 @@ public class RecordService {
 	            passwordNode.forEach(n -> passwordFields.add(n.asText()));
 	    }
 
-	    // ✅ Read HTML
 	    String htmlTemplate = new String(htmlFile.getBytes(), StandardCharsets.UTF_8).replaceFirst("^\uFEFF", "");
 
-	    // ✅ Prepare output directory
 	    String outputDir = "DownloadHTMLANDPDF" + File.separator;
 	    Files.createDirectories(Path.of(outputDir));
 	    List<String> htmlPaths = new ArrayList<>();
-
-	    // ✅ Loop through all uploaded JSON files
 	    for (MultipartFile file : files) {
 	        JsonNode dataJson = mapper.readTree(file.getInputStream());
 	        boolean anyMatchFound = false;
 
-	        // ✅ Check if this JSON file has at least one matching field from payload
 	        for (Iterator<Map.Entry<String, JsonNode>> users = dataJson.fields(); users.hasNext();) {
 	            Map.Entry<String, JsonNode> entry = users.next();
 	            JsonNode userNode = entry.getValue();
@@ -531,7 +510,6 @@ public class RecordService {
 	            if (anyMatchFound) break;
 	        }
 
-	        // ✅ Skip this JSON file if no field matched
 	        if (!anyMatchFound) {
 	            System.out.println("⚠️ Skipping JSON file '" + file.getOriginalFilename() + "' — no matching data found.");
 	            logService.logActivity(null, "HTML_TO_HTML", "SKIPPED",
@@ -539,7 +517,6 @@ public class RecordService {
 	            continue;
 	        }
 
-	        // ✅ Process all users inside the JSON file
 	        for (Iterator<Map.Entry<String, JsonNode>> users = dataJson.fields(); users.hasNext();) {
 	            Map.Entry<String, JsonNode> entry = users.next();
 	            String userKey = entry.getKey();
@@ -550,11 +527,9 @@ public class RecordService {
 	            userNode.fieldNames()
 	                    .forEachRemaining(field -> normalizedFieldMap.put(field.toLowerCase(), userNode.get(field)));
 
-	            // ✅ Parse HTML for each user
 	            Document doc = Jsoup.parse(htmlTemplate);
 	            doc.outputSettings().syntax(Document.OutputSettings.Syntax.xml);
 
-	            // ✅ Replace HTML IDs with matching values
 	            htmlIdToJsonField.forEach((id, nodeRef) -> {
 	                String fieldRef = nodeRef.isTextual() ? nodeRef.asText() : null;
 	                if (fieldRef == null)
@@ -570,7 +545,6 @@ public class RecordService {
 	                }
 	            });
 
-	            // ✅ Determine file name
 	            String fileType;
 	            if (!fileNameFields.isEmpty()) {
 	                StringBuilder fnBuilder = new StringBuilder();
@@ -588,7 +562,6 @@ public class RecordService {
 
 	            String htmlFileName = outputDir + fileType + ".html";
 
-	            // ✅ Handle password encryption
 	            String userPassword = null;
 	            if (!passwordFields.isEmpty()) {
 	                StringBuilder pwBuilder = new StringBuilder();
@@ -604,7 +577,6 @@ public class RecordService {
 	                    ? userPassword
 	                    : "AutoEncryptHTMLFixedKey";
 
-	            // ✅ Encrypt and wrap in decryption HTML
 	            String encryptedFullHtml = encryptAES(finalHtml, encryptionKey);
 
 	            StringBuilder decryptWrapper = new StringBuilder();
@@ -648,7 +620,6 @@ public class RecordService {
 
 	            decryptWrapper.append("})();\n</script></body></html>");
 
-	            // ✅ Save HTML file
 	            Files.write(Path.of(htmlFileName), decryptWrapper.toString().getBytes(StandardCharsets.UTF_8));
 	            htmlPaths.add(htmlFileName);
 	        }
@@ -696,9 +667,6 @@ public class RecordService {
 		info.setResult(result);
 		info.setSendRequestTime(startTime);
 		info.setOutputResponseTime(endTime);
-//		info.setUser_id(request.getId());
-//		info.setTypeRequested(request.getDownloadType());
-//		info.setWhichAppRequestSentBy("Restful API");
 		logRepository.save(info);
 	}
 
