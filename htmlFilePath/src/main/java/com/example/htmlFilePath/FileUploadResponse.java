@@ -9,6 +9,5 @@ public class FileUploadResponse {
     private String message;
 //    private String[] jsonData;
 
-    // getters and setters are not shown for brevity
 
 }

@@ -25,9 +25,6 @@ public class HtmlToRtfController {
     @Autowired
     private LogService logService;
 
-    /**
-     * Converts uploaded HTML file to .doc format
-     */
     @PostMapping("/toDoc")
     public ResponseEntity<?> convertToDoc(@RequestPart("file") MultipartFile file) {
         Date startTime = new Date();
@@ -80,16 +77,13 @@ public class HtmlToRtfController {
         }
     }
 
-    /**
-     * Converts uploaded HTML file to .rtf format
-     */
+
     @PostMapping("/toRtf")
     public ResponseEntity<?> convertToRtf(@RequestPart("file") MultipartFile file) {
         Date startTime = new Date();
         String randomFileName = "Rtf_" + UUID.randomUUID() + ".rtf";
 
         try {
-            // ✅ Validate input
             if (file == null || file.isEmpty()) {
                 String msg = "No file provided or file is empty.";
                 logService.logActivity(null, "HTML_TO_RTF", "FAILURE", msg, startTime);
@@ -98,7 +92,6 @@ public class HtmlToRtfController {
 
             byte[] rtfBytes = htmlToRtfService.convertHtmlToRtf(file.getInputStream());
 
-            // ✅ Log success
             logService.logActivity(
                     null,
                     "HTML_TO_RTF",
@@ -113,7 +106,6 @@ public class HtmlToRtfController {
                     .body(rtfBytes);
 
         } catch (IllegalArgumentException e) {
-            // ⚠️ Known input issue
             logService.logActivity(
                     null,
                     "HTML_TO_RTF",
@@ -125,7 +117,6 @@ public class HtmlToRtfController {
                     .body("Invalid input: " + e.getMessage());
 
         } catch (Exception e) {
-            // ❌ Unknown or system error
             logService.logActivity(
                     null,
                     "HTML_TO_RTF",
@@ -137,74 +128,74 @@ public class HtmlToRtfController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error converting to RTF: " + e.getMessage());
         }
-    }
-
-        
-        
-//        @PostMapping("/toDoc")
-//    public ResponseEntity<byte[]> convertToDoc(@RequestPart("file") MultipartFile file) throws Exception {
-//        byte[] docBytes = htmlToRtfService.convertHtmlToDoc(file.getInputStream());
-//        
-//		String randomFileName ="Doc_"+ UUID.randomUUID().toString() + ".doc";
-//        return ResponseEntity.ok()
-//                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename="+randomFileName)
-//                .contentType(MediaType.parseMediaType("application/msword"))
-//                .body(docBytes);
-//    }
-//
-//    @PostMapping("/toRtf")
-//    public ResponseEntity<byte[]> convertToRtfs(@RequestPart("file") MultipartFile file) throws Exception {
-//        byte[] rtfBytes = htmlToRtfService.convertHtmlToRtf(file.getInputStream());
-//        
-//		String randomFileName = "Rtf_"+UUID.randomUUID().toString() + ".rtf";
-//
-//        return ResponseEntity.ok()
-//                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename="+randomFileName)
-//                .contentType(MediaType.parseMediaType("application/rtf"))
-//                .body(rtfBytes);
-//    }
-//    
-    
-//    @PostMapping("/uploadHtmlToRtf")
-//    public ResponseEntity<byte[]> uploadHtmlToRtf(
-//            @RequestPart(value = "file", required = false) MultipartFile htmlFile) {
-//
-//        Date startTime = new Date();
-//        
-//        RequestDTO requestDTO = new RequestDTO();
-//
-//        try {
-//            if (htmlFile == null || htmlFile.isEmpty()) {
-//                String errorMsg = "HTML file not selected";
-//                return ResponseEntity.badRequest().body(errorMsg.getBytes());
-//            }
-//
-//            List<String> generatedRtfPaths = htmlToRtfService.processAndGenerateRtf(htmlFile);
-//
-//            if (generatedRtfPaths.isEmpty()) {
-//                String errorMsg = "No RTF files generated from the given input";
-//                return ResponseEntity.badRequest().body(errorMsg.getBytes());
-//            }
-//
-//            String rtfPath = generatedRtfPaths.get(0);
-//            File rtfFile = new File(rtfPath);
-//            byte[] rtfBytes = Files.readAllBytes(rtfFile.toPath());
-//
-//            String randomFileName = UUID.randomUUID().toString() + ".rtf";
-//
-//            HttpHeaders headers = new HttpHeaders();
-//            headers.setContentType(MediaType.valueOf("application/rtf"));
-//            headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + randomFileName);
-//
-//
-//            return new ResponseEntity<>(rtfBytes, headers, HttpStatus.OK);
-//
-//        } catch (Exception e) {
-//            String errorMsg = "Exception occurred: " + e.getMessage();
-//            return ResponseEntity.internalServerError().body(errorMsg.getBytes());
-//        }
-//    }
-
-
+    }    
     
 }
+
+
+
+
+//@PostMapping("/toDoc")
+//public ResponseEntity<byte[]> convertToDoc(@RequestPart("file") MultipartFile file) throws Exception {
+//byte[] docBytes = htmlToRtfService.convertHtmlToDoc(file.getInputStream());
+//
+//String randomFileName ="Doc_"+ UUID.randomUUID().toString() + ".doc";
+//return ResponseEntity.ok()
+//      .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename="+randomFileName)
+//      .contentType(MediaType.parseMediaType("application/msword"))
+//      .body(docBytes);
+//}
+//
+//@PostMapping("/toRtf")
+//public ResponseEntity<byte[]> convertToRtfs(@RequestPart("file") MultipartFile file) throws Exception {
+//byte[] rtfBytes = htmlToRtfService.convertHtmlToRtf(file.getInputStream());
+//
+//String randomFileName = "Rtf_"+UUID.randomUUID().toString() + ".rtf";
+//
+//return ResponseEntity.ok()
+//      .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename="+randomFileName)
+//      .contentType(MediaType.parseMediaType("application/rtf"))
+//      .body(rtfBytes);
+//}
+//
+
+//@PostMapping("/uploadHtmlToRtf")
+//public ResponseEntity<byte[]> uploadHtmlToRtf(
+//  @RequestPart(value = "file", required = false) MultipartFile htmlFile) {
+//
+//Date startTime = new Date();
+//
+//RequestDTO requestDTO = new RequestDTO();
+//
+//try {
+//  if (htmlFile == null || htmlFile.isEmpty()) {
+//      String errorMsg = "HTML file not selected";
+//      return ResponseEntity.badRequest().body(errorMsg.getBytes());
+//  }
+//
+//  List<String> generatedRtfPaths = htmlToRtfService.processAndGenerateRtf(htmlFile);
+//
+//  if (generatedRtfPaths.isEmpty()) {
+//      String errorMsg = "No RTF files generated from the given input";
+//      return ResponseEntity.badRequest().body(errorMsg.getBytes());
+//  }
+//
+//  String rtfPath = generatedRtfPaths.get(0);
+//  File rtfFile = new File(rtfPath);
+//  byte[] rtfBytes = Files.readAllBytes(rtfFile.toPath());
+//
+//  String randomFileName = UUID.randomUUID().toString() + ".rtf";
+//
+//  HttpHeaders headers = new HttpHeaders();
+//  headers.setContentType(MediaType.valueOf("application/rtf"));
+//  headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + randomFileName);
+//
+//
+//  return new ResponseEntity<>(rtfBytes, headers, HttpStatus.OK);
+//
+//} catch (Exception e) {
+//  String errorMsg = "Exception occurred: " + e.getMessage();
+//  return ResponseEntity.internalServerError().body(errorMsg.getBytes());
+//}
+//}
+

@@ -19,9 +19,7 @@ public class JsonLogService {
 	private static final String LOG_DIR = "errorlogs";
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
-	/**
-	 * Saves logs with level and ensures newest logs appear first.
-	 */
+
 	public synchronized List<JsonLog> saveLogs(List<String> messages, String level) throws IOException {
 		LocalDate today = LocalDate.now().plusDays(2);
 		String dateStr = today.toString();
@@ -33,13 +31,11 @@ public class JsonLogService {
 		File file = new File(LOG_DIR + "/" + dateStr + ".json");
 		List<JsonLog> existingLogs = new ArrayList<>();
 
-		// Load existing logs if file already exists
 		if (file.exists()) {
 			existingLogs = objectMapper.readValue(file, new TypeReference<List<JsonLog>>() {
 			});
 		}
 
-		// Prepare new logs (only these will be returned)
 		List<JsonLog> newLogs = new ArrayList<>();
 		DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 
@@ -53,15 +49,12 @@ public class JsonLogService {
 			newLogs.add(log);
 		}
 
-		// ✅ Keep all logs for storage (new logs on top)
 		List<JsonLog> updatedLogs = new ArrayList<>();
 		updatedLogs.addAll(newLogs);
 		updatedLogs.addAll(existingLogs);
 
-		// Write the updated logs back to file
 		objectMapper.writerWithDefaultPrettyPrinter().writeValue(file, updatedLogs);
 
-		// ✅ Return ONLY the newly created logs in response
 		return newLogs;
 	}
 
@@ -73,7 +66,6 @@ public class JsonLogService {
 			return result;
 
 		if ((fromDateStr == null || fromDateStr.isEmpty()) && (toDateStr == null || toDateStr.isEmpty())) {
-			// ✅ No parameters → include ALL log files
 			File[] allFiles = dir.listFiles((d, name) -> name.endsWith(".json"));
 			if (allFiles != null) {
 				for (File file : allFiles) {
@@ -85,7 +77,6 @@ public class JsonLogService {
 			return result;
 		}
 
-		// ✅ If parameters exist → filter between from and to
 		LocalDate fromDate = (fromDateStr == null || fromDateStr.isEmpty()) ? LocalDate.now()
 				: LocalDate.parse(fromDateStr);
 

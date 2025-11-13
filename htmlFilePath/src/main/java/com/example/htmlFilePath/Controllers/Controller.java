@@ -125,7 +125,6 @@ public class Controller {
 
             User user = optionalUser.get();
 
-            // Save editableHtml if provided
             if (editableHtml != null && !editableHtml.isEmpty()) {
                 String folderPath = checkFolder("HtmlDownloads");
                 String editableFileName = generateFileName(user.getId(), "editable_html.html");
@@ -133,7 +132,6 @@ public class Controller {
                 user.setEditableHtml(folderPath + File.separator + editableFileName);
             }
 
-            // Save downloadableHtml if provided
             if (downloadableHtml != null && !downloadableHtml.isEmpty()) {
                 String folderPath = checkFolder("HtmlDownloads");
                 String downloadableFileName = generateFileName(user.getId(), "downloadable_html.html");
@@ -141,14 +139,11 @@ public class Controller {
                 user.setDownloadableHtml(folderPath + File.separator + downloadableFileName);
             }
 
-            // Save user after updating file paths
             repository.save(user);
 
-            // Log success
             String successMessage = "HTML files updated successfully for user ID " + id;
             logService.logActivity(id, "UPLOAD_HTML", "SUCCESS", successMessage, startTime);
 
-            // Prepare response
             FileUploadResponse response = new FileUploadResponse();
             response.setFileName1(user.getEditableHtml());
             response.setFileName2(user.getDownloadableHtml());
@@ -179,7 +174,6 @@ public class Controller {
 
         Date startTime = new Date();
         try {
-            // --- Validation checks ---
             if (ObjectUtils.isEmpty(name)) {
                 String msg = "Name is required.";
                 logService.logActivity(null, "UPLOAD_HTML", "FAILURE", msg, startTime);
@@ -204,14 +198,12 @@ public class Controller {
                 return ResponseEntity.badRequest().body(msg);
             }
 
-            // --- Create user record ---
             User user = new User();
             user.setName(name);
             user = repository.save(user);
 
             String folderPath = checkFolder("HtmlDownloads");
 
-            // --- Save files ---
             String editableFileName = generateFileName(user.getId(), "editable_html.html");
             saveFile(editableFileName, editableHtml);
             user.setEditableHtml(folderPath + File.separator + editableFileName);
@@ -222,7 +214,6 @@ public class Controller {
 
             repository.save(user);
 
-            // --- Success logging ---
             String successMsg = "HTML templates saved with name: " + name;
             logService.logActivity(user.getId(), "UPLOAD_HTML", "SUCCESS", successMsg, startTime);
 
@@ -279,10 +270,6 @@ public class Controller {
         return item.isPresent();
     }
 
-    /*
-     * ______________________________________________________________________________________________________________________
-     */
-    
    
     //not using
     @GetMapping("/getFile")
@@ -349,37 +336,29 @@ public class Controller {
 
     public ResponseEntity<?> getPdf(MultipartFile multipartFile, String name) {
         try {
-            // Define the API endpoint URL
             String apiUrl = "https://estateagents.club/api/api/v1/s3Upload/uploadHtml";
             String fileName = multipartFile.getOriginalFilename();
 
-            // Create the request body with name and file parameters
             MultiValueMap<String, Object> requestBody = new LinkedMultiValueMap<>();
-            requestBody.add("name", name); // Use the provided name parameter
+            requestBody.add("name", name); 
 
-            // Read the HTML file content and add it as a file parameter
             byte[] fileData = multipartFile.getBytes();
             HttpHeaders fileHeaders = createFileHeaders(Objects.requireNonNull(fileName));
             requestBody.add("file", new HttpEntity<>(fileData, fileHeaders));
 
-            // Build the complete request entity
             RequestEntity<MultiValueMap<String, Object>> requestEntity = RequestEntity
                     .post(apiUrl)
                     .contentType(MediaType.MULTIPART_FORM_DATA)
                     .body(requestBody);
 
-            // Make the HTTP POST request and receive a ResponseEntity<Resource>
             ResponseEntity<Resource> response = restTemplate.exchange(requestEntity, Resource.class);
 
-            // Check if the response status is OK (HTTP status code 200)
             if (response.getStatusCode() == HttpStatus.OK) {
                 Resource pdfResource = response.getBody();
 
-                // Define the local file path where you want to save the PDF
                 String path = Mypath.getPath() + "DownloadHTMLANDPDF" + File.separator;
                 Path directoryPath = Paths.get(path);
 
-                // Create the directories if they don't exist
                 Files.createDirectories(directoryPath);
                 System.out.println("Directories created or already exist at: " + directoryPath.toString());
 
@@ -399,7 +378,7 @@ public class Controller {
 
                 HttpHeaders headers = new HttpHeaders();
                 headers.setContentType(MediaType.APPLICATION_PDF);
-                headers.setContentDispositionFormData("attachment", "editable_html.pdf"); // Adjust filename if needed
+                headers.setContentDispositionFormData("attachment", "editable_html.pdf");
 
                 Path pdfPath = localFile.toPath();
                 
@@ -478,10 +457,6 @@ public class Controller {
     }
 
    
-
-    /*
-     * ______________________________________________________________________________________________________________________
-     */
      //need to check
     @PutMapping("/editTemplate/{id}")
     public ResponseEntity<String> editUser(@PathVariable Integer id, @RequestBody User user) {
@@ -580,7 +555,6 @@ public class Controller {
         String typeRequested = "GET_ERROR_LOGS";
 
         try {
-            // ✅ If both dates are empty, return all logs
             if (ObjectUtils.isEmpty(startDate) && ObjectUtils.isEmpty(endDate)) {
                 List<LogData> allLogs = logBookRepo.findAll();
                 logService.logActivity(
@@ -629,7 +603,6 @@ public class Controller {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);
             }
 
-            // ✅ Fetch filtered logs
             List<LogData> logs;
             if (start != null && end != null) {
                 logs = logBookRepo.findBySendRequestTimeBetween(start, end);

@@ -20,12 +20,9 @@ public class LogData {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
     private Date sendRequestTime;
-//    private Integer user_id;
     private String result;
     
     @Column(name = "message", columnDefinition = "TEXT")
     private String message;
     private Date outputResponseTime;
-//    private String typeRequested;
-//    private String whichAppRequestSentBy;
 }

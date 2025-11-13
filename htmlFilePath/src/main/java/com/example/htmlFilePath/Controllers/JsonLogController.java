@@ -90,7 +90,6 @@ public ResponseEntity<?> getLogs(
     try {
         List<JsonLog> logs = errorLogService.getLogs(from, to);
 
-        // Sort newest first
         logs.sort(Comparator.comparing(
                 (JsonLog log) -> log.getDate() + " " + log.getTime()
         ).reversed());

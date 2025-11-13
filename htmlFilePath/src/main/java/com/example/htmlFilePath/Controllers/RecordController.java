@@ -69,7 +69,6 @@ public class RecordController {
 	            return ResponseEntity.badRequest().body(msg.getBytes());
 	        }
 
-	        // ✅ process payload with support for pageSize/orientation
 	        List<String> generatedPdfPaths = service.processAndGeneratePdf(payload, files, htmlFile);
 
 	        if (generatedPdfPaths.isEmpty()) {
@@ -78,7 +77,6 @@ public class RecordController {
 	            return ResponseEntity.badRequest().body(msg.getBytes());
 	        }
 
-	        // ✅ Create ZIP
 	        byte[] zipBytes = service.createZipFromFiles(generatedPdfPaths);
 	        String randomFileName = UUID.randomUUID().toString() + ".zip";
 
@@ -166,7 +164,6 @@ public class RecordController {
 			if (htmlFile == null || htmlFile.isEmpty()) {
 				String errorMsg = "HTML file not selected";
 				logService.logActivity(null,"Upload_Single_PDF", "FAILURE", errorMsg, startTime);	
-//				service.logToDatabase(requestDTO, , errorMsg, startTime);
 				return ResponseEntity.badRequest().body(errorMsg.getBytes());
 			}
 
@@ -197,7 +194,6 @@ public class RecordController {
 			}
 			String pdfFileNames = pdfFileNamesBuilder.toString();
 
-//			service.logToDatabase(requestDTO, "SUCCESS", pdfFileNames + " generated and zipped successfully", startTime);
 			logService.logActivity(null,"Upload_Single_PDF", "SUCCESS", "Single page PDF generated successfully", startTime);	
 
 
