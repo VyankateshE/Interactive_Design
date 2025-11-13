@@ -1,6 +1,5 @@
 package com.example.htmlFilePath.Controllers;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,36 +20,32 @@ import java.util.Map;
 @CrossOrigin(origins = "*")
 public class JsonLogController {
 
-   
-	 @Autowired
-	    private JsonLogService errorLogService;
+	@Autowired
+	private JsonLogService errorLogService;
 
-	    @Autowired
-	    private LogService logService;
-	    
-	    @PostMapping
-	    public ResponseEntity<?> createLogs(@RequestBody Map<String, Object> payload) throws IOException {
-	        Date startTime = new Date();
+	@Autowired
+	private LogService logService;
 
-	        try {
-	            Object messageObj = payload.get("message");
-	            String level = payload.get("level") != null ? payload.get("level").toString().toUpperCase() : "INFO";
+	@PostMapping
+	public ResponseEntity<?> createLogs(@RequestBody Map<String, Object> payload) throws IOException {
+		Date startTime = new Date();
 
-	            List<String> messages;
-	            if (messageObj instanceof String) {
-	                messages = List.of((String) messageObj);
-	            } else if (messageObj instanceof List) {
-	                messages = (List<String>) messageObj;
-	            } else {
-	                logService.logActivity(
-	                        null, "CREATE_JSON_LOG", "FAILURE",
-	                        "Invalid message format in request payload",
-	                        startTime
-	                );
-	                return ResponseEntity.badRequest().body(Map.of("success", false, "error", "Invalid message format"));
-	            }
+		try {
+			Object messageObj = payload.get("message");
+			String level = payload.get("level") != null ? payload.get("level").toString().toUpperCase() : "INFO";
 
-	            List<JsonLog> createdLogs = errorLogService.saveLogs(messages, level);
+			List<String> messages;
+			if (messageObj instanceof String) {
+				messages = List.of((String) messageObj);
+			} else if (messageObj instanceof List) {
+				messages = (List<String>) messageObj;
+			} else {
+				logService.logActivity(null, "CREATE_JSON_LOG", "FAILURE", "Invalid message format in request payload",
+						startTime);
+				return ResponseEntity.badRequest().body(Map.of("success", false, "error", "Invalid message format"));
+			}
+
+			List<JsonLog> createdLogs = errorLogService.saveLogs(messages, level);
 
 //	            logService.logActivity(
 //	                    null, "CREATE_JSON_LOG", "SUCCESS",
@@ -58,91 +53,68 @@ public class JsonLogController {
 //	                    startTime
 //	            );
 
-	            return ResponseEntity.ok(Map.of(
-	                    "success", true,
-	                    "logs", createdLogs
-	            ));
+			return ResponseEntity.ok(Map.of("success", true, "logs", createdLogs));
 
-	        } catch (Exception e) {
-	            e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
 
-	            logService.logActivity(
-	                    null, "CREATE_JSON_LOG", "FAILURE",
-	                    "Error occurred while saving JSON logs: " + e.getMessage(),
-	                    startTime
-	            );
+			logService.logActivity(null, "CREATE_JSON_LOG", "FAILURE",
+					"Error occurred while saving JSON logs: " + e.getMessage(), startTime);
 
-	            return ResponseEntity.internalServerError().body(Map.of(
-	                    "success", false,
-	                    "error", "Failed to create logs",
-	                    "details", e.getMessage()
-	            ));
-	        }
-	    }
+			return ResponseEntity.internalServerError()
+					.body(Map.of("success", false, "error", "Failed to create logs", "details", e.getMessage()));
+		}
+	}
 
-	 @GetMapping
-public ResponseEntity<?> getLogs(
-        @RequestParam(required = false) String from,
-        @RequestParam(required = false) String to
-) {
-    Date startTime = new Date();
+	@GetMapping
+	public ResponseEntity<?> getLogs(@RequestParam(required = false) String from,
+			@RequestParam(required = false) String to) {
+		Date startTime = new Date();
 
-    try {
-        List<JsonLog> logs = errorLogService.getLogs(from, to);
+		try {
+			List<JsonLog> logs = errorLogService.getLogs(from, to);
 
-        logs.sort(Comparator.comparing(
-                (JsonLog log) -> log.getDate() + " " + log.getTime()
-        ).reversed());
+			logs.sort(Comparator.comparing((JsonLog log) -> log.getDate() + " " + log.getTime()).reversed());
 
-        logService.logActivity(
-                null, "GET_JSON_LOGS", "SUCCESS",
-                "Fetched " + logs.size() + " logs (from=" + from + ", to=" + to + ")",
-                startTime
-        );
+			logService.logActivity(null, "GET_JSON_LOGS", "SUCCESS",
+					"Fetched " + logs.size() + " logs (from=" + from + ", to=" + to + ")", startTime);
 
-        return ResponseEntity.ok(Map.of("success", true, "logs", logs));
+			return ResponseEntity.ok(Map.of("success", true, "logs", logs));
 
-    } catch (Exception e) {
-        e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
 
-        logService.logActivity(
-                null, "GET_JSON_LOGS", "FAILURE",
-                "Error fetching logs: " + e.getMessage(),
-                startTime
-        );
+			logService.logActivity(null, "GET_JSON_LOGS", "FAILURE", "Error fetching logs: " + e.getMessage(),
+					startTime);
 
-        return ResponseEntity.internalServerError().body(Map.of(
-                "success", false,
-                "error", "Failed to fetch logs",
-                "details", e.getMessage()
-        ));
-    }
+			return ResponseEntity.internalServerError()
+					.body(Map.of("success", false, "error", "Failed to fetch logs", "details", e.getMessage()));
+		}
+	}
 }
 
-//    @PostMapping
-//    public ResponseEntity<?> createLogs(@RequestBody Map<String, Object> payload) throws IOException {
-//        Object messageObj = payload.get("message");
-//        List<String> messages;
+//@PostMapping
+//public ResponseEntity<?> createLogs(@RequestBody Map<String, Object> payload) throws IOException {
+//  Object messageObj = payload.get("message");
+//  List<String> messages;
 //
-//        if (messageObj instanceof String) {
-//            messages = List.of((String) messageObj);
-//        } else if (messageObj instanceof List) {
-//            messages = (List<String>) messageObj;
-//        } else {
-//            return ResponseEntity.badRequest().body(Map.of("success", false, "error", "Invalid message format"));
-//        }
+//  if (messageObj instanceof String) {
+//      messages = List.of((String) messageObj);
+//  } else if (messageObj instanceof List) {
+//      messages = (List<String>) messageObj;
+//  } else {
+//      return ResponseEntity.badRequest().body(Map.of("success", false, "error", "Invalid message format"));
+//  }
 //
-//        List<JsonLog> createdLogs = errorLogService.saveLogs(messages);
-//        return ResponseEntity.ok(Map.of("success", true, "logs", createdLogs));
-//    }
+//  List<JsonLog> createdLogs = errorLogService.saveLogs(messages);
+//  return ResponseEntity.ok(Map.of("success", true, "logs", createdLogs));
+//}
 //
-//    @GetMapping
-//    public ResponseEntity<List<JsonLog>> getLogs(
-//            @RequestParam(required = false) String from,
-//            @RequestParam(required = false) String to
-//    ) throws IOException {
-//        List<JsonLog> logs = errorLogService.getLogs(from, to);
-//        return ResponseEntity.ok(logs);
-//    }
-}
-
+//@GetMapping
+//public ResponseEntity<List<JsonLog>> getLogs(
+//      @RequestParam(required = false) String from,
+//      @RequestParam(required = false) String to
+//) throws IOException {
+//  List<JsonLog> logs = errorLogService.getLogs(from, to);
+//  return ResponseEntity.ok(logs);
+//}

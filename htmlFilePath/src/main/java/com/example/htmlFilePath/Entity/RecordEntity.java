@@ -1,4 +1,5 @@
 package com.example.htmlFilePath.Entity;
+
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
@@ -14,15 +15,14 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class RecordEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    private String fileName;
+	private String fileName;
 
-
-    @Builder
-    public RecordEntity(String fileName) {
-        this.fileName = fileName;
-    }
+	@Builder
+	public RecordEntity(String fileName) {
+		this.fileName = fileName;
+	}
 }

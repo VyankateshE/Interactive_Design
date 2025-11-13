@@ -5,8 +5,8 @@ import lombok.Data;
 @Data
 public class RequestDTO {
 
-    private Integer id;
-    private String jsonData;
-    private String downloadType;
+	private Integer id;
+	private String jsonData;
+	private String downloadType;
 
 }

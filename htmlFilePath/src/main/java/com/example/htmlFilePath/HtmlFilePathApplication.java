@@ -11,9 +11,10 @@ public class HtmlFilePathApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(HtmlFilePathApplication.class, args);
 	}
+
 	@Bean
 	RestTemplate restTemplate() {
-		return new RestTemplate(); 
+		return new RestTemplate();
 	}
 
-} 
+}

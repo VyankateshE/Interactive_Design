@@ -19,7 +19,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -27,132 +26,126 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-
 @RestController
 @RequestMapping("/jsonApi")
 @CrossOrigin(origins = "*")
-public class RecordController { 
-    
+public class RecordController {
+
 	@Autowired
 	private RecordService service;
-    
+
 	@Autowired
 	private LogService logService;
-	
-	
-	
+
 	// ---------------------- UPLOAD PDF ----------------------
 	@PostMapping("/uploadPdf")
-	public ResponseEntity<byte[]> uploadPdf(
-	        @RequestPart(value = "payload", required = false) String payload,
-	        @RequestPart(value = "jsonFile", required = false) MultipartFile[] files,
-	        @RequestPart(value = "file", required = false) MultipartFile htmlFile) {
+	public ResponseEntity<byte[]> uploadPdf(@RequestPart(value = "payload", required = false) String payload,
+			@RequestPart(value = "jsonFile", required = false) MultipartFile[] files,
+			@RequestPart(value = "file", required = false) MultipartFile htmlFile) {
 
-	    Date startTime = new Date();
+		Date startTime = new Date();
 
-	    try {
-	        if (payload == null || payload.isEmpty()) {
-	            String msg = "Payload is missing or empty";
-	            logService.logActivity(null, "HTML_TO_PDF", "FAILURE", msg, startTime);
-	            return ResponseEntity.badRequest().body(msg.getBytes());
-	        }
+		try {
+			if (payload == null || payload.isEmpty()) {
+				String msg = "Payload is missing or empty";
+				logService.logActivity(null, "HTML_TO_PDF", "FAILURE", msg, startTime);
+				return ResponseEntity.badRequest().body(msg.getBytes());
+			}
 
-	        if (files == null || files.length == 0 || Arrays.stream(files).allMatch(f -> f == null || f.isEmpty())) {
-	            String msg = "JSON file not selected";
-	            logService.logActivity(null, "HTML_TO_PDF", "FAILURE", msg, startTime);
-	            return ResponseEntity.badRequest().body(msg.getBytes());
-	        }
+			if (files == null || files.length == 0 || Arrays.stream(files).allMatch(f -> f == null || f.isEmpty())) {
+				String msg = "JSON file not selected";
+				logService.logActivity(null, "HTML_TO_PDF", "FAILURE", msg, startTime);
+				return ResponseEntity.badRequest().body(msg.getBytes());
+			}
 
-	        if (htmlFile == null || htmlFile.isEmpty()) {
-	            String msg = "HTML file not selected";
-	            logService.logActivity(null, "HTML_TO_PDF", "FAILURE", msg, startTime);
-	            return ResponseEntity.badRequest().body(msg.getBytes());
-	        }
+			if (htmlFile == null || htmlFile.isEmpty()) {
+				String msg = "HTML file not selected";
+				logService.logActivity(null, "HTML_TO_PDF", "FAILURE", msg, startTime);
+				return ResponseEntity.badRequest().body(msg.getBytes());
+			}
 
-	        List<String> generatedPdfPaths = service.processAndGeneratePdf(payload, files, htmlFile);
+			List<String> generatedPdfPaths = service.processAndGeneratePdf(payload, files, htmlFile);
 
-	        if (generatedPdfPaths.isEmpty()) {
-	            String msg = "No PDF files generated from the given input";
-	            logService.logActivity(null, "HTML_TO_PDF", "FAILURE", msg, startTime);
-	            return ResponseEntity.badRequest().body(msg.getBytes());
-	        }
+			if (generatedPdfPaths.isEmpty()) {
+				String msg = "No PDF files generated from the given input";
+				logService.logActivity(null, "HTML_TO_PDF", "FAILURE", msg, startTime);
+				return ResponseEntity.badRequest().body(msg.getBytes());
+			}
 
-	        byte[] zipBytes = service.createZipFromFiles(generatedPdfPaths);
-	        String randomFileName = UUID.randomUUID().toString() + ".zip";
+			byte[] zipBytes = service.createZipFromFiles(generatedPdfPaths);
+			String randomFileName = UUID.randomUUID().toString() + ".zip";
 
-	        HttpHeaders headers = new HttpHeaders();
-	        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-	        headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + randomFileName);
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+			headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + randomFileName);
 
-	        int pdfCount = generatedPdfPaths.size();
-	        String successMsg = pdfCount + (pdfCount == 1 ? " PDF" : " PDFs") + " generated and zipped successfully";
-	        logService.logActivity(null, "HTML_TO_PDF", "SUCCESS", successMsg, startTime);
+			int pdfCount = generatedPdfPaths.size();
+			String successMsg = pdfCount + (pdfCount == 1 ? " PDF" : " PDFs") + " generated and zipped successfully";
+			logService.logActivity(null, "HTML_TO_PDF", "SUCCESS", successMsg, startTime);
 
-	        return new ResponseEntity<>(zipBytes, headers, HttpStatus.OK);
+			return new ResponseEntity<>(zipBytes, headers, HttpStatus.OK);
 
-	    } catch (Exception e) {
-	        String msg = "Exception occurred while uploading PDF: " + e.getMessage();
-	        logService.logActivity(null, "HTML_TO_PDF", "FAILURE", msg, startTime);
-	        return ResponseEntity.internalServerError().body(msg.getBytes());
-	    }
+		} catch (Exception e) {
+			String msg = "Exception occurred while uploading PDF: " + e.getMessage();
+			logService.logActivity(null, "HTML_TO_PDF", "FAILURE", msg, startTime);
+			return ResponseEntity.internalServerError().body(msg.getBytes());
+		}
 	}
 
-    // ---------------------- UPLOAD HTML ----------------------
-    @PostMapping("/uploadHtml")
-    public ResponseEntity<byte[]> uploadHtml(
-            @RequestPart(value = "payload", required = false) String payload,
-            @RequestPart(value = "jsonFile", required = false) MultipartFile[] files,
-            @RequestPart(value = "file", required = false) MultipartFile htmlFile) {
+	// ---------------------- UPLOAD HTML ----------------------
+	@PostMapping("/uploadHtml")
+	public ResponseEntity<byte[]> uploadHtml(@RequestPart(value = "payload", required = false) String payload,
+			@RequestPart(value = "jsonFile", required = false) MultipartFile[] files,
+			@RequestPart(value = "file", required = false) MultipartFile htmlFile) {
 
-        Date startTime = new Date();
+		Date startTime = new Date();
 
-        try {
-            if (payload == null || payload.isEmpty()) {
-                String msg = "Payload is missing or empty";
-                logService.logActivity(null, "HTML_UPLOAD", "FAILURE", msg, startTime);
-                return ResponseEntity.badRequest().body(msg.getBytes());
-            }
+		try {
+			if (payload == null || payload.isEmpty()) {
+				String msg = "Payload is missing or empty";
+				logService.logActivity(null, "HTML_UPLOAD", "FAILURE", msg, startTime);
+				return ResponseEntity.badRequest().body(msg.getBytes());
+			}
 
-            if (files == null || files.length == 0 || Arrays.stream(files).allMatch(f -> f == null || f.isEmpty())) {
-                String msg = "JSON file not selected";
-                logService.logActivity(null, "HTML_UPLOAD", "FAILURE", msg, startTime);
-                return ResponseEntity.badRequest().body(msg.getBytes());
-            }
+			if (files == null || files.length == 0 || Arrays.stream(files).allMatch(f -> f == null || f.isEmpty())) {
+				String msg = "JSON file not selected";
+				logService.logActivity(null, "HTML_UPLOAD", "FAILURE", msg, startTime);
+				return ResponseEntity.badRequest().body(msg.getBytes());
+			}
 
-            if (htmlFile == null || htmlFile.isEmpty()) {
-                String msg = "HTML file not selected";
-                logService.logActivity(null, "HTML_UPLOAD", "FAILURE", msg, startTime);
-                return ResponseEntity.badRequest().body(msg.getBytes());
-            }
+			if (htmlFile == null || htmlFile.isEmpty()) {
+				String msg = "HTML file not selected";
+				logService.logActivity(null, "HTML_UPLOAD", "FAILURE", msg, startTime);
+				return ResponseEntity.badRequest().body(msg.getBytes());
+			}
 
-            List<String> generatedHtmlPaths = service.processAndGenerateHtml(payload, files, htmlFile);
-            if (generatedHtmlPaths.isEmpty()) {
-                String msg = "No HTML files generated from the given input";
-                logService.logActivity(null, "HTML_UPLOAD", "FAILURE", msg, startTime);
-                return ResponseEntity.badRequest().body(msg.getBytes());
-            }
+			List<String> generatedHtmlPaths = service.processAndGenerateHtml(payload, files, htmlFile);
+			if (generatedHtmlPaths.isEmpty()) {
+				String msg = "No HTML files generated from the given input";
+				logService.logActivity(null, "HTML_UPLOAD", "FAILURE", msg, startTime);
+				return ResponseEntity.badRequest().body(msg.getBytes());
+			}
 
-            byte[] zipBytes = service.createZipFromFiles(generatedHtmlPaths);
-            String randomFileName = UUID.randomUUID().toString() + ".zip";
+			byte[] zipBytes = service.createZipFromFiles(generatedHtmlPaths);
+			String randomFileName = UUID.randomUUID().toString() + ".zip";
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-            headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + randomFileName);
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+			headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + randomFileName);
 
-            int count = generatedHtmlPaths.size();
-            String successMsg = count + (count == 1 ? " HTML" : " HTMLs") + " generated and zipped successfully";
-            logService.logActivity(null, "HTML_UPLOAD", "SUCCESS", successMsg, startTime);
+			int count = generatedHtmlPaths.size();
+			String successMsg = count + (count == 1 ? " HTML" : " HTMLs") + " generated and zipped successfully";
+			logService.logActivity(null, "HTML_UPLOAD", "SUCCESS", successMsg, startTime);
 
-            return new ResponseEntity<>(zipBytes, headers, HttpStatus.OK);
+			return new ResponseEntity<>(zipBytes, headers, HttpStatus.OK);
 
-        } catch (Exception e) {
-            String msg = "Exception occurred while uploading HTML: " + e.getMessage();
-            logService.logActivity(null, "HTML_UPLOAD", "FAILURE", msg, startTime);
-            return ResponseEntity.internalServerError().body(msg.getBytes());
-        }
-    }
-    
-    
+		} catch (Exception e) {
+			String msg = "Exception occurred while uploading HTML: " + e.getMessage();
+			logService.logActivity(null, "HTML_UPLOAD", "FAILURE", msg, startTime);
+			return ResponseEntity.internalServerError().body(msg.getBytes());
+		}
+	}
+
 	@PostMapping("/uploadSinglePagePdf")
 	public ResponseEntity<byte[]> SingleHtmlToPdf(
 			@RequestPart(value = "file", required = false) MultipartFile htmlFile) {
@@ -163,7 +156,7 @@ public class RecordController {
 		try {
 			if (htmlFile == null || htmlFile.isEmpty()) {
 				String errorMsg = "HTML file not selected";
-				logService.logActivity(null,"Upload_Single_PDF", "FAILURE", errorMsg, startTime);	
+				logService.logActivity(null, "Upload_Single_PDF", "FAILURE", errorMsg, startTime);
 				return ResponseEntity.badRequest().body(errorMsg.getBytes());
 			}
 
@@ -184,18 +177,19 @@ public class RecordController {
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_PDF);
 			headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + randomFileName);
-			
-			String filename= new RecordEntity().getFileName();
-			
+
+			String filename = new RecordEntity().getFileName();
+
 			StringBuilder pdfFileNamesBuilder = new StringBuilder();
 			for (String path : generatedPdfPaths) {
-			    if (pdfFileNamesBuilder.length() > 0) pdfFileNamesBuilder.append(", ");
-			    pdfFileNamesBuilder.append(Paths.get(path).getFileName().toString());
+				if (pdfFileNamesBuilder.length() > 0)
+					pdfFileNamesBuilder.append(", ");
+				pdfFileNamesBuilder.append(Paths.get(path).getFileName().toString());
 			}
 			String pdfFileNames = pdfFileNamesBuilder.toString();
 
-			logService.logActivity(null,"Upload_Single_PDF", "SUCCESS", "Single page PDF generated successfully", startTime);	
-
+			logService.logActivity(null, "Upload_Single_PDF", "SUCCESS", "Single page PDF generated successfully",
+					startTime);
 
 			return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
 
@@ -204,51 +198,49 @@ public class RecordController {
 			return ResponseEntity.internalServerError().body(errorMsg.getBytes());
 		}
 	}
-	
-	
 
-    // ---------------------- DIRECT HTML TO PDF ----------------------
-    @PostMapping("/uploadHtmlToPdf")
-    public ResponseEntity<byte[]> uploadHtmlToPdf(@RequestPart(value = "file", required = false) MultipartFile htmlFile) {
+	// ---------------------- DIRECT HTML TO PDF ----------------------
+	@PostMapping("/uploadHtmlToPdf")
+	public ResponseEntity<byte[]> uploadHtmlToPdf(
+			@RequestPart(value = "file", required = false) MultipartFile htmlFile) {
 
-        Date startTime = new Date();
+		Date startTime = new Date();
 
-        try {
-            if (htmlFile == null || htmlFile.isEmpty()) {
-                String msg = "HTML file not selected";
-                logService.logActivity(null, "HTML_TO_PDF_DIRECT", "FAILURE", msg, startTime);
-                return ResponseEntity.badRequest().body(msg.getBytes());
-            }
+		try {
+			if (htmlFile == null || htmlFile.isEmpty()) {
+				String msg = "HTML file not selected";
+				logService.logActivity(null, "HTML_TO_PDF_DIRECT", "FAILURE", msg, startTime);
+				return ResponseEntity.badRequest().body(msg.getBytes());
+			}
 
-            List<String> generatedPdfPaths = service.processAndGeneratePdf(htmlFile);
-            if (generatedPdfPaths.isEmpty()) {
-                String msg = "No PDF files generated from the given input";
-                logService.logActivity(null, "HTML_TO_PDF_DIRECT", "FAILURE", msg, startTime);
-                return ResponseEntity.badRequest().body(msg.getBytes());
-            }
+			List<String> generatedPdfPaths = service.processAndGeneratePdf(htmlFile);
+			if (generatedPdfPaths.isEmpty()) {
+				String msg = "No PDF files generated from the given input";
+				logService.logActivity(null, "HTML_TO_PDF_DIRECT", "FAILURE", msg, startTime);
+				return ResponseEntity.badRequest().body(msg.getBytes());
+			}
 
-            File pdfFile = new File(generatedPdfPaths.get(0));
-            byte[] pdfBytes = java.nio.file.Files.readAllBytes(pdfFile.toPath());
-            String randomFileName = UUID.randomUUID().toString() + ".pdf";
+			File pdfFile = new File(generatedPdfPaths.get(0));
+			byte[] pdfBytes = java.nio.file.Files.readAllBytes(pdfFile.toPath());
+			String randomFileName = UUID.randomUUID().toString() + ".pdf";
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_PDF);
-            headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + randomFileName);
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_PDF);
+			headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + randomFileName);
 //              String dataJpa=headers.getAccessControlAllowOrigin();
-              
-            logService.logActivity(null, "HTML_TO_PDF_DIRECT", "SUCCESS", "PDF generated successfully", startTime);
-            return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
-        } catch (Exception e) {
-            String msg = "Exception occurred while converting HTML to PDF: " + e.getMessage();
-            logService.logActivity(null, "HTML_TO_PDF_DIRECT", "FAILURE", msg, startTime);
-            return ResponseEntity.internalServerError().body(msg.getBytes());
-        }
-    }
-    
-    
-    
 
-    // ---------------------- SINGLE HTML TO PDF ----------------------
+			logService.logActivity(null, "HTML_TO_PDF_DIRECT", "SUCCESS", "PDF generated successfully", startTime);
+			return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
+		} catch (Exception e) {
+			String msg = "Exception occurred while converting HTML to PDF: " + e.getMessage();
+			logService.logActivity(null, "HTML_TO_PDF_DIRECT", "FAILURE", msg, startTime);
+			return ResponseEntity.internalServerError().body(msg.getBytes());
+		}
+	}
+	
+}
+
+	// ---------------------- SINGLE HTML TO PDF ----------------------
 //    @PostMapping("/uploadSinglePagePdf")
 //    public ResponseEntity<byte[]> uploadSinglePagePdf(@RequestPart(value = "file", required = false) MultipartFile htmlFile) {
 //
@@ -285,11 +277,7 @@ public class RecordController {
 //            return ResponseEntity.internalServerError().body(msg.getBytes());
 //        }
 //    }
-    
-    
-    
-    
-    
+
 //	// ---------------------- UPLOAD PDF ----------------------
 //  @PostMapping("/uploadPdf")
 //  public ResponseEntity<byte[]> uploadPdf(
@@ -346,8 +334,6 @@ public class RecordController {
 //      }
 //  }
 
-	
-	
 //	@PostMapping("/uploadPdf")
 //	public ResponseEntity<byte[]> upload(@RequestPart(value = "payload", required = false) String payload,
 //			@RequestPart(value = "jsonFile", required = false) MultipartFile[] files,
@@ -599,16 +585,6 @@ public class RecordController {
 //			return ResponseEntity.internalServerError().body(errorMsg.getBytes());
 //		}
 //	}
-	
-	
-	
-	
-
-	
-	
-	
-}
-
 
 
 

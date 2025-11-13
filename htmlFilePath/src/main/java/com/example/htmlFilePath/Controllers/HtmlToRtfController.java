@@ -18,122 +18,78 @@ import com.example.htmlFilePath.Services.LogService;
 @CrossOrigin(origins = "*")
 public class HtmlToRtfController {
 
-    @Autowired
-    private HtmlToDocRtfService htmlToRtfService;
-    
-   
-    @Autowired
-    private LogService logService;
+	@Autowired
+	private HtmlToDocRtfService htmlToRtfService;
 
-    @PostMapping("/toDoc")
-    public ResponseEntity<?> convertToDoc(@RequestPart("file") MultipartFile file) {
-        Date startTime = new Date();
-        String randomFileName = "Doc_" + UUID.randomUUID() + ".doc";
+	@Autowired
+	private LogService logService;
 
-        try {
-            if (file == null || file.isEmpty()) {
-                String msg = "No file provided or file is empty.";
-                logService.logActivity(null, "HTML_TO_DOC", "FAILURE", msg, startTime);
-                return ResponseEntity.badRequest().body(msg);
-            }
+	@PostMapping("/toDoc")
+	public ResponseEntity<?> convertToDoc(@RequestPart("file") MultipartFile file) {
+		Date startTime = new Date();
+		String randomFileName = "Doc_" + UUID.randomUUID() + ".doc";
 
-            byte[] docBytes = htmlToRtfService.convertHtmlToDoc(file.getInputStream());
+		try {
+			if (file == null || file.isEmpty()) {
+				String msg = "No file provided or file is empty.";
+				logService.logActivity(null, "HTML_TO_DOC", "FAILURE", msg, startTime);
+				return ResponseEntity.badRequest().body(msg);
+			}
 
-            logService.logActivity(
-                    null,
-                    "HTML_TO_DOC",
-                    "SUCCESS",
-                    "File converted successfully: " + randomFileName,
-                    startTime
-            );
+			byte[] docBytes = htmlToRtfService.convertHtmlToDoc(file.getInputStream());
 
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + randomFileName)
-                    .contentType(MediaType.parseMediaType("application/msword"))
-                    .body(docBytes);
+			logService.logActivity(null, "HTML_TO_DOC", "SUCCESS", "File converted successfully: " + randomFileName,
+					startTime);
 
-        } catch (IllegalArgumentException e) {
-            logService.logActivity(
-                    null,
-                    "HTML_TO_DOC",
-                    "FAILURE",
-                    "Invalid input: " + e.getMessage(),
-                    startTime
-            );
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Invalid input: " + e.getMessage());
+			return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + randomFileName)
+					.contentType(MediaType.parseMediaType("application/msword")).body(docBytes);
 
-        } catch (Exception e) {
-            logService.logActivity(
-                    null,
-                    "HTML_TO_DOC",
-                    "FAILURE",
-                    "Error converting HTML to DOC: " + e.getMessage(),
-                    startTime
-            );
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error converting to DOC: " + e.getMessage());
-        }
-    }
+		} catch (IllegalArgumentException e) {
+			logService.logActivity(null, "HTML_TO_DOC", "FAILURE", "Invalid input: " + e.getMessage(), startTime);
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid input: " + e.getMessage());
 
+		} catch (Exception e) {
+			logService.logActivity(null, "HTML_TO_DOC", "FAILURE", "Error converting HTML to DOC: " + e.getMessage(),
+					startTime);
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body("Error converting to DOC: " + e.getMessage());
+		}
+	}
 
-    @PostMapping("/toRtf")
-    public ResponseEntity<?> convertToRtf(@RequestPart("file") MultipartFile file) {
-        Date startTime = new Date();
-        String randomFileName = "Rtf_" + UUID.randomUUID() + ".rtf";
+	@PostMapping("/toRtf")
+	public ResponseEntity<?> convertToRtf(@RequestPart("file") MultipartFile file) {
+		Date startTime = new Date();
+		String randomFileName = "Rtf_" + UUID.randomUUID() + ".rtf";
 
-        try {
-            if (file == null || file.isEmpty()) {
-                String msg = "No file provided or file is empty.";
-                logService.logActivity(null, "HTML_TO_RTF", "FAILURE", msg, startTime);
-                return ResponseEntity.badRequest().body(msg);
-            }
+		try {
+			if (file == null || file.isEmpty()) {
+				String msg = "No file provided or file is empty.";
+				logService.logActivity(null, "HTML_TO_RTF", "FAILURE", msg, startTime);
+				return ResponseEntity.badRequest().body(msg);
+			}
 
-            byte[] rtfBytes = htmlToRtfService.convertHtmlToRtf(file.getInputStream());
+			byte[] rtfBytes = htmlToRtfService.convertHtmlToRtf(file.getInputStream());
 
-            logService.logActivity(
-                    null,
-                    "HTML_TO_RTF",
-                    "SUCCESS",
-                    "File converted to RTF successfully",
-                    startTime
-            );
+			logService.logActivity(null, "HTML_TO_RTF", "SUCCESS", "File converted to RTF successfully", startTime);
 
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + randomFileName)
-                    .contentType(MediaType.parseMediaType("application/rtf"))
-                    .body(rtfBytes);
+			return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + randomFileName)
+					.contentType(MediaType.parseMediaType("application/rtf")).body(rtfBytes);
 
-        } catch (IllegalArgumentException e) {
-            logService.logActivity(
-                    null,
-                    "HTML_TO_RTF",
-                    "FAILURE",
-                    "Invalid input: " + e.getMessage(),
-                    startTime
-            );
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Invalid input: " + e.getMessage());
+		} catch (IllegalArgumentException e) {
+			logService.logActivity(null, "HTML_TO_RTF", "FAILURE", "Invalid input: " + e.getMessage(), startTime);
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid input: " + e.getMessage());
 
-        } catch (Exception e) {
-            logService.logActivity(
-                    null,
-                    "HTML_TO_RTF",
-                    "FAILURE",
-                    "Error converting HTML to RTF: " + e.getMessage(),
-                    startTime
-            );
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error converting to RTF: " + e.getMessage());
-        }
-    }    
-    
+		} catch (Exception e) {
+			logService.logActivity(null, "HTML_TO_RTF", "FAILURE", "Error converting HTML to RTF: " + e.getMessage(),
+					startTime);
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body("Error converting to RTF: " + e.getMessage());
+		}
+	}
+
 }
-
-
-
 
 //@PostMapping("/toDoc")
 //public ResponseEntity<byte[]> convertToDoc(@RequestPart("file") MultipartFile file) throws Exception {
@@ -198,4 +154,3 @@ public class HtmlToRtfController {
 //  return ResponseEntity.internalServerError().body(errorMsg.getBytes());
 //}
 //}
-

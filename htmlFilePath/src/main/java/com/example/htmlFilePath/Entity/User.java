@@ -1,6 +1,5 @@
 package com.example.htmlFilePath.Entity;
 
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -12,14 +11,13 @@ import lombok.Data;
 @Data
 public class User {
 
-
 	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer id;
 
-    String name;
+	String name;
 
-    String EditableHtml;
+	String EditableHtml;
 
-    String DownloadableHtml;
+	String DownloadableHtml;
 }
