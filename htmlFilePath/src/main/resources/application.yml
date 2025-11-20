@@ -1,6 +1,6 @@
 server:
   port: 9998
-  address: 192.168.0.221
+  # address: 192.168.0.221
 
 spring:
   datasource:
