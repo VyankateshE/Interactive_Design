@@ -48,31 +48,19 @@ public class RecordController {
 		try {
 			if (payload == null || payload.isEmpty()) {
 				String msg = "Payload is missing or empty";
-<<<<<<< HEAD
-				logService.logActivity(null, "HTML_TO_PDF", "FAILURE", msg, startTime);
-=======
 				logService.logActivity("FAILURE", msg, startTime);
->>>>>>> 0baeca5 (Reconnect project)
 				return ResponseEntity.badRequest().body(msg.getBytes());
 			}
 
 			if (files == null || files.length == 0 || Arrays.stream(files).allMatch(f -> f == null || f.isEmpty())) {
 				String msg = "JSON file not selected";
-<<<<<<< HEAD
-				logService.logActivity(null, "HTML_TO_PDF", "FAILURE", msg, startTime);
-=======
 				logService.logActivity("FAILURE", msg, startTime);
->>>>>>> 0baeca5 (Reconnect project)
 				return ResponseEntity.badRequest().body(msg.getBytes());
 			}
 
 			if (htmlFile == null || htmlFile.isEmpty()) {
 				String msg = "HTML file not selected";
-<<<<<<< HEAD
-				logService.logActivity(null, "HTML_TO_PDF", "FAILURE", msg, startTime);
-=======
 				logService.logActivity("FAILURE", msg, startTime);
->>>>>>> 0baeca5 (Reconnect project)
 				return ResponseEntity.badRequest().body(msg.getBytes());
 			}
 
@@ -80,11 +68,7 @@ public class RecordController {
 
 			if (generatedPdfPaths.isEmpty()) {
 				String msg = "No PDF files generated from the given input";
-<<<<<<< HEAD
-				logService.logActivity(null, "HTML_TO_PDF", "FAILURE", msg, startTime);
-=======
 				logService.logActivity("FAILURE", msg, startTime);
->>>>>>> 0baeca5 (Reconnect project)
 				return ResponseEntity.badRequest().body(msg.getBytes());
 			}
 
@@ -97,21 +81,13 @@ public class RecordController {
 
 			int pdfCount = generatedPdfPaths.size();
 			String successMsg = pdfCount + (pdfCount == 1 ? " PDF" : " PDFs") + " generated and zipped successfully";
-<<<<<<< HEAD
-			logService.logActivity(null, "HTML_TO_PDF", "SUCCESS", successMsg, startTime);
-=======
 			logService.logActivity( "SUCCESS", successMsg, startTime);
->>>>>>> 0baeca5 (Reconnect project)
 
 			return new ResponseEntity<>(zipBytes, headers, HttpStatus.OK);
 
 		} catch (Exception e) {
 			String msg = "Exception occurred while uploading PDF: " + e.getMessage();
-<<<<<<< HEAD
-			logService.logActivity(null, "HTML_TO_PDF", "FAILURE", msg, startTime);
-=======
 			logService.logActivity("FAILURE", msg, startTime);
->>>>>>> 0baeca5 (Reconnect project)
 			return ResponseEntity.internalServerError().body(msg.getBytes());
 		}
 	}
@@ -127,42 +103,26 @@ public class RecordController {
 		try {
 			if (payload == null || payload.isEmpty()) {
 				String msg = "Payload is missing or empty";
-<<<<<<< HEAD
-				logService.logActivity(null, "HTML_UPLOAD", "FAILURE", msg, startTime);
-=======
 				logService.logActivity( "FAILURE", msg, startTime);
->>>>>>> 0baeca5 (Reconnect project)
 				return ResponseEntity.badRequest().body(msg.getBytes());
 			}
 
 			if (files == null || files.length == 0 || Arrays.stream(files).allMatch(f -> f == null || f.isEmpty())) {
 				String msg = "JSON file not selected";
-<<<<<<< HEAD
-				logService.logActivity(null, "HTML_UPLOAD", "FAILURE", msg, startTime);
-=======
 				logService.logActivity( "FAILURE", msg, startTime);
->>>>>>> 0baeca5 (Reconnect project)
 				return ResponseEntity.badRequest().body(msg.getBytes());
 			}
 
 			if (htmlFile == null || htmlFile.isEmpty()) {
 				String msg = "HTML file not selected";
-<<<<<<< HEAD
-				logService.logActivity(null, "HTML_UPLOAD", "FAILURE", msg, startTime);
-=======
 				logService.logActivity( "FAILURE", msg, startTime);
->>>>>>> 0baeca5 (Reconnect project)
 				return ResponseEntity.badRequest().body(msg.getBytes());
 			}
 
 			List<String> generatedHtmlPaths = service.processAndGenerateHtml(payload, files, htmlFile);
 			if (generatedHtmlPaths.isEmpty()) {
 				String msg = "No HTML files generated from the given input";
-<<<<<<< HEAD
-				logService.logActivity(null, "HTML_UPLOAD", "FAILURE", msg, startTime);
-=======
 				logService.logActivity( "FAILURE", msg, startTime);
->>>>>>> 0baeca5 (Reconnect project)
 				return ResponseEntity.badRequest().body(msg.getBytes());
 			}
 
@@ -175,21 +135,13 @@ public class RecordController {
 
 			int count = generatedHtmlPaths.size();
 			String successMsg = count + (count == 1 ? " HTML" : " HTMLs") + " generated and zipped successfully";
-<<<<<<< HEAD
-			logService.logActivity(null, "HTML_UPLOAD", "SUCCESS", successMsg, startTime);
-=======
 			logService.logActivity( "SUCCESS", successMsg, startTime);
->>>>>>> 0baeca5 (Reconnect project)
 
 			return new ResponseEntity<>(zipBytes, headers, HttpStatus.OK);
 
 		} catch (Exception e) {
 			String msg = "Exception occurred while uploading HTML: " + e.getMessage();
-<<<<<<< HEAD
-			logService.logActivity(null, "HTML_UPLOAD", "FAILURE", msg, startTime);
-=======
 			logService.logActivity( "FAILURE", msg, startTime);
->>>>>>> 0baeca5 (Reconnect project)
 			return ResponseEntity.internalServerError().body(msg.getBytes());
 		}
 	}
@@ -204,11 +156,7 @@ public class RecordController {
 		try {
 			if (htmlFile == null || htmlFile.isEmpty()) {
 				String errorMsg = "HTML file not selected";
-<<<<<<< HEAD
-				logService.logActivity(null, "Upload_Single_PDF", "FAILURE", errorMsg, startTime);
-=======
 				logService.logActivity( "FAILURE", errorMsg, startTime);
->>>>>>> 0baeca5 (Reconnect project)
 				return ResponseEntity.badRequest().body(errorMsg.getBytes());
 			}
 
@@ -240,11 +188,7 @@ public class RecordController {
 			}
 			String pdfFileNames = pdfFileNamesBuilder.toString();
 
-<<<<<<< HEAD
-			logService.logActivity(null, "Upload_Single_PDF", "SUCCESS", "Single page PDF generated successfully",
-=======
 			logService.logActivity("SUCCESS", "Single page PDF generated successfully",
->>>>>>> 0baeca5 (Reconnect project)
 					startTime);
 
 			return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
@@ -265,22 +209,14 @@ public class RecordController {
 		try {
 			if (htmlFile == null || htmlFile.isEmpty()) {
 				String msg = "HTML file not selected";
-<<<<<<< HEAD
-				logService.logActivity(null, "HTML_TO_PDF_DIRECT", "FAILURE", msg, startTime);
-=======
 				logService.logActivity("FAILURE", msg, startTime);
->>>>>>> 0baeca5 (Reconnect project)
 				return ResponseEntity.badRequest().body(msg.getBytes());
 			}
 
 			List<String> generatedPdfPaths = service.processAndGeneratePdf(htmlFile);
 			if (generatedPdfPaths.isEmpty()) {
 				String msg = "No PDF files generated from the given input";
-<<<<<<< HEAD
-				logService.logActivity(null, "HTML_TO_PDF_DIRECT", "FAILURE", msg, startTime);
-=======
 				logService.logActivity("FAILURE", msg, startTime);
->>>>>>> 0baeca5 (Reconnect project)
 				return ResponseEntity.badRequest().body(msg.getBytes());
 			}
 
@@ -293,19 +229,11 @@ public class RecordController {
 			headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + randomFileName);
 //              String dataJpa=headers.getAccessControlAllowOrigin();
 
-<<<<<<< HEAD
-			logService.logActivity(null, "HTML_TO_PDF_DIRECT", "SUCCESS", "PDF generated successfully", startTime);
-			return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
-		} catch (Exception e) {
-			String msg = "Exception occurred while converting HTML to PDF: " + e.getMessage();
-			logService.logActivity(null, "HTML_TO_PDF_DIRECT", "FAILURE", msg, startTime);
-=======
 			logService.logActivity("SUCCESS", "PDF generated successfully", startTime);
 			return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
 		} catch (Exception e) {
 			String msg = "Exception occurred while converting HTML to PDF: " + e.getMessage();
 			logService.logActivity("FAILURE", msg, startTime);
->>>>>>> 0baeca5 (Reconnect project)
 			return ResponseEntity.internalServerError().body(msg.getBytes());
 		}
 	}

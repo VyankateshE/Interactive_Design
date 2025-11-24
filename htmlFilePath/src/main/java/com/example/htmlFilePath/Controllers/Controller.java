@@ -119,11 +119,7 @@ public class Controller {
 			Optional<User> optionalUser = repository.findById(id);
 			if (!optionalUser.isPresent()) {
 				String errorMessage = "User not found with id: " + id;
-<<<<<<< HEAD
-				logService.logActivity(id, "UPLOAD_HTML", "FAILURE", errorMessage, startTime);
-=======
 				logService.logActivity("FAILURE", errorMessage, startTime);
->>>>>>> 0baeca5 (Reconnect project)
 				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
 			}
 
@@ -146,11 +142,7 @@ public class Controller {
 			repository.save(user);
 
 			String successMessage = "HTML files updated successfully for user ID " + id;
-<<<<<<< HEAD
-			logService.logActivity(id, "UPLOAD_HTML", "SUCCESS", successMessage, startTime);
-=======
 			logService.logActivity("SUCCESS", successMessage, startTime);
->>>>>>> 0baeca5 (Reconnect project)
 
 			FileUploadResponse response = new FileUploadResponse();
 			response.setFileName1(user.getEditableHtml());
@@ -162,21 +154,13 @@ public class Controller {
 		} catch (IOException e) {
 			String errorMessage = "File processing error: " + e.getMessage();
 			e.printStackTrace();
-<<<<<<< HEAD
-			logService.logActivity(id, "UPLOAD_HTML", "FAILURE", errorMessage, startTime);
-=======
 			logService.logActivity("FAILURE", errorMessage, startTime);
->>>>>>> 0baeca5 (Reconnect project)
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
 
 		} catch (Exception e) {
 			String errorMessage = "Unexpected error: " + e.getMessage();
 			e.printStackTrace();
-<<<<<<< HEAD
-			logService.logActivity(id, "UPLOAD_HTML", "FAILURE", errorMessage, startTime);
-=======
 			logService.logActivity("FAILURE", errorMessage, startTime);
->>>>>>> 0baeca5 (Reconnect project)
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
 		}
 	}
@@ -191,41 +175,25 @@ public class Controller {
 		try {
 			if (ObjectUtils.isEmpty(name)) {
 				String msg = "Name is required.";
-<<<<<<< HEAD
-				logService.logActivity(null, "UPLOAD_HTML", "FAILURE", msg, startTime);
-=======
 				logService.logActivity("FAILURE", msg, startTime);
->>>>>>> 0baeca5 (Reconnect project)
 				return ResponseEntity.badRequest().body(msg);
 			}
 
 			if (editableHtml == null || editableHtml.isEmpty()) {
 				String msg = "Editable HTML file is missing.";
-<<<<<<< HEAD
-				logService.logActivity(null, "UPLOAD_HTML", "FAILURE", msg, startTime);
-=======
 				logService.logActivity("FAILURE", msg, startTime);
->>>>>>> 0baeca5 (Reconnect project)
 				return ResponseEntity.badRequest().body(msg);
 			}
 
 			if (downloadableHtml == null || downloadableHtml.isEmpty()) {
 				String msg = "Downloadable HTML file is missing.";
-<<<<<<< HEAD
-				logService.logActivity(null, "UPLOAD_HTML", "FAILURE", msg, startTime);
-=======
 				logService.logActivity("FAILURE", msg, startTime);
->>>>>>> 0baeca5 (Reconnect project)
 				return ResponseEntity.badRequest().body(msg);
 			}
 
 			if (doesNameExist(name)) {
 				String msg = "Template name already exists: " + name;
-<<<<<<< HEAD
-				logService.logActivity(null, "UPLOAD_HTML", "FAILURE", msg, startTime);
-=======
 				logService.logActivity("FAILURE", msg, startTime);
->>>>>>> 0baeca5 (Reconnect project)
 				return ResponseEntity.badRequest().body(msg);
 			}
 
@@ -246,11 +214,7 @@ public class Controller {
 			repository.save(user);
 
 			String successMsg = "HTML templates saved with name: " + name;
-<<<<<<< HEAD
-			logService.logActivity(user.getId(), "UPLOAD_HTML", "SUCCESS", successMsg, startTime);
-=======
 			logService.logActivity("SUCCESS", successMsg, startTime);
->>>>>>> 0baeca5 (Reconnect project)
 
 			FileUploadResponse response = new FileUploadResponse();
 			response.setFileName1(user.getEditableHtml());
@@ -262,21 +226,13 @@ public class Controller {
 		} catch (IOException e) {
 			String msg = "File processing error: " + e.getMessage();
 			e.printStackTrace();
-<<<<<<< HEAD
-			logService.logActivity(null, "UPLOAD_HTML", "FAILURE", msg, startTime);
-=======
 			logService.logActivity("FAILURE", msg, startTime);
->>>>>>> 0baeca5 (Reconnect project)
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(msg);
 
 		} catch (Exception e) {
 			String msg = "Unexpected error during file upload: " + e.getMessage();
 			e.printStackTrace();
-<<<<<<< HEAD
-			logService.logActivity(null, "UPLOAD_HTML", "FAILURE", msg, startTime);
-=======
 			logService.logActivity("FAILURE", msg, startTime);
->>>>>>> 0baeca5 (Reconnect project)
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(msg);
 		}
 	}
@@ -336,11 +292,7 @@ public class Controller {
 				File file = new File(newFilePath);
 				InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
 
-<<<<<<< HEAD
-				logService.logActivity(user.getId(), "DOWNLOAD_HTML", "SUCCESS", "HTML file generated successfully",
-=======
 				logService.logActivity("SUCCESS", "HTML file generated successfully",
->>>>>>> 0baeca5 (Reconnect project)
 						startTime);
 
 				HttpHeaders headers = new HttpHeaders();
@@ -357,39 +309,23 @@ public class Controller {
 
 				ResponseEntity<?> response = getPdf(multipartFile, user.getId() + "_converted_" + timestamp);
 
-<<<<<<< HEAD
-				logService.logActivity(user.getId(), "DOWNLOAD_PDF", "SUCCESS", "PDF generated successfully",
-=======
 				logService.logActivity("SUCCESS", "PDF generated successfully",
->>>>>>> 0baeca5 (Reconnect project)
 						startTime);
 				return response;
 			} else {
 				String msg = "Invalid download type: " + downloadType;
-<<<<<<< HEAD
-				logService.logActivity(user.getId(), "DOWNLOAD_FILE", "FAILURE", msg, startTime);
-=======
 				logService.logActivity( "FAILURE", msg, startTime);
->>>>>>> 0baeca5 (Reconnect project)
 				return ResponseEntity.badRequest().body(msg);
 			}
 
 		} catch (FileNotFoundException e) {
-<<<<<<< HEAD
-			logService.logActivity(requestDTO.getId(), "DOWNLOAD_FILE", "FAILURE", e.getMessage(), startTime);
-=======
 			logService.logActivity("FAILURE", e.getMessage(), startTime);
->>>>>>> 0baeca5 (Reconnect project)
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
 
 		} catch (Exception e) {
 			String msg = "Error processing file: " + e.getMessage();
 			e.printStackTrace();
-<<<<<<< HEAD
-			logService.logActivity(requestDTO.getId(), "DOWNLOAD_FILE", "FAILURE", msg, startTime);
-=======
 			logService.logActivity("FAILURE", msg, startTime);
->>>>>>> 0baeca5 (Reconnect project)
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(msg);
 		}
 	}
@@ -513,19 +449,11 @@ public class Controller {
 		Date startTime = new Date();
 		try {
 			String result = serviceLogic.editUser(id, user);
-<<<<<<< HEAD
-			logService.logActivity(id, "EDIT_TEMPLATE", "SUCCESS", result, startTime);
-			return ResponseEntity.ok(result);
-		} catch (Exception e) {
-			String msg = "Template update failed no ID found " + id;
-			logService.logActivity(id, "EDIT_TEMPLATE", "FAILURE", msg, startTime);
-=======
 			logService.logActivity("SUCCESS", result, startTime);
 			return ResponseEntity.ok(result);
 		} catch (Exception e) {
 			String msg = "Template update failed no ID found " + id;
 			logService.logActivity("FAILURE", msg, startTime);
->>>>>>> 0baeca5 (Reconnect project)
 			return ResponseEntity.badRequest().body(msg);
 		}
 	}
@@ -535,20 +463,12 @@ public class Controller {
 		Date startTime = new Date();
 		try {
 			String result = serviceLogic.deleteUser(id);
-<<<<<<< HEAD
-			logService.logActivity(id, "DELETE_TEMPLATE", "SUCCESS", result, startTime);
-=======
 			logService.logActivity( "SUCCESS", result, startTime);
->>>>>>> 0baeca5 (Reconnect project)
 			return ResponseEntity.ok(result);
 		} catch (Exception e) {
 			String msg = "Template deletion failed no id found: " + id;
 
-<<<<<<< HEAD
-			logService.logActivity(id, "DELETE_TEMPLATE", "FAILURE", msg, startTime);
-=======
 			logService.logActivity( "FAILURE", msg, startTime);
->>>>>>> 0baeca5 (Reconnect project)
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);
 		}
 	}
@@ -572,31 +492,19 @@ public class Controller {
 				response.put("EditableHtml", "<h1>Error loading HTML</h1>");
 			}
 
-<<<<<<< HEAD
-			logService.logActivity(id, "GET_TEMPLATE", "SUCCESS",
-=======
 			logService.logActivity("SUCCESS",
->>>>>>> 0baeca5 (Reconnect project)
 					"Template with id " + id + " fetched successfully for editing", startTime);
 			return ResponseEntity.ok(response);
 
 		} catch (NoSuchElementException e) {
 			String msg = e.getMessage();
-<<<<<<< HEAD
-			logService.logActivity(id, "GET_TEMPLATE", "FAILURE", msg, startTime);
-=======
 			logService.logActivity("FAILURE", msg, startTime);
->>>>>>> 0baeca5 (Reconnect project)
 			response.put("error", msg);
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
 
 		} catch (Exception e) {
 			String msg = "Error fetching template: " + e.getMessage();
-<<<<<<< HEAD
-			logService.logActivity(id, "GET_TEMPLATE", "FAILURE", msg, startTime);
-=======
 			logService.logActivity("FAILURE", msg, startTime);
->>>>>>> 0baeca5 (Reconnect project)
 			response.put("error", msg);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
 		}
@@ -609,20 +517,12 @@ public class Controller {
 			List<User> userList = repository.findAll();
 			Collections.reverse(userList);
 
-<<<<<<< HEAD
-			logService.logActivity(null, "GET_ALL_TEMPLATES", "SUCCESS", "Fetched all templates succesfully",
-=======
 			logService.logActivity("SUCCESS", "Fetched all templates succesfully",
->>>>>>> 0baeca5 (Reconnect project)
 					startTime);
 			return ResponseEntity.ok(userList);
 		} catch (Exception e) {
 			String msg = "Error fetching templates: " + e.getMessage();
-<<<<<<< HEAD
-			logService.logActivity(null, "GET_ALL_TEMPLATES", "FAILURE", msg, startTime);
-=======
 			logService.logActivity("FAILURE", msg, startTime);
->>>>>>> 0baeca5 (Reconnect project)
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(msg);
 		}
 	}
@@ -641,11 +541,7 @@ public class Controller {
 		try {
 			if (ObjectUtils.isEmpty(startDate) && ObjectUtils.isEmpty(endDate)) {
 				List<LogData> allLogs = logBookRepo.findAll();
-<<<<<<< HEAD
-				logService.logActivity(null, typeRequested, "SUCCESS", "Fetched all logs", startTime);
-=======
 				logService.logActivity("SUCCESS", "Fetched all logs", startTime);
->>>>>>> 0baeca5 (Reconnect project)
 
 				allLogs.sort((a, b) -> b.getSendRequestTime().compareTo(a.getSendRequestTime()));
 
@@ -665,11 +561,7 @@ public class Controller {
 					start = outputFormat.parse(formattedStart);
 				} catch (Exception ex) {
 					String msg = "Invalid startDate format. Expected format: yyyy-MM-dd";
-<<<<<<< HEAD
-					logService.logActivity(null, typeRequested, "FAILURE", msg, startTime);
-=======
 					logService.logActivity("FAILURE", msg, startTime);
->>>>>>> 0baeca5 (Reconnect project)
 					return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);
 				}
 			}
@@ -681,22 +573,14 @@ public class Controller {
 					end = outputFormat.parse(formattedEnd);
 				} catch (Exception ex) {
 					String msg = "Invalid endDate format. Expected format: yyyy-MM-dd";
-<<<<<<< HEAD
-					logService.logActivity(null, typeRequested, "FAILURE", msg, startTime);
-=======
 					logService.logActivity("FAILURE", msg, startTime);
->>>>>>> 0baeca5 (Reconnect project)
 					return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);
 				}
 			}
 
 			if (start != null && end != null && end.before(start)) {
 				String msg = "Invalid date range: endDate cannot be before startDate.";
-<<<<<<< HEAD
-				logService.logActivity(null, typeRequested, "FAILURE", msg, startTime);
-=======
 				logService.logActivity("FAILURE", msg, startTime);
->>>>>>> 0baeca5 (Reconnect project)
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);
 			}
 
@@ -709,11 +593,7 @@ public class Controller {
 				logs = logBookRepo.findBySendRequestTimeBefore(end);
 			}
 
-<<<<<<< HEAD
-			logService.logActivity(null, typeRequested, "SUCCESS", "Fetched logs between "
-=======
 			logService.logActivity("SUCCESS", "Fetched logs between "
->>>>>>> 0baeca5 (Reconnect project)
 					+ (startDate != null ? startDate : "beginning") + " and " + (endDate != null ? endDate : "today"),
 					startTime);
 
@@ -724,11 +604,7 @@ public class Controller {
 		} catch (Exception e) {
 			e.printStackTrace();
 			String msg = "Unexpected error fetching logs: " + e.getMessage();
-<<<<<<< HEAD
-			logService.logActivity(null, typeRequested, "FAILURE", msg, startTime);
-=======
 			logService.logActivity("FAILURE", msg, startTime);
->>>>>>> 0baeca5 (Reconnect project)
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).headers(headers).body(msg);
 		}
 	}

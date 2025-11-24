@@ -15,11 +15,8 @@ public class JsonService {
 //    public String addUser(UserDTO userDTO){
 //        User user = UserConvertor.convertUserDTOtoEntity(userDTO);
 //        crud_repository.save(user);
-<<<<<<< HEAD
 //        return "User added successfully";
-=======
 //        return "User added successfullyss";
->>>>>>> 0baeca5 (Reconnect project)
 //    }
 
 	public String editUser(Integer id, User user) {

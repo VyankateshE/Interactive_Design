@@ -40,11 +40,7 @@ public class JsonLogController {
 			} else if (messageObj instanceof List) {
 				messages = (List<String>) messageObj;
 			} else {
-<<<<<<< HEAD
-				logService.logActivity(null, "CREATE_JSON_LOG", "FAILURE", "Invalid message format in request payload",
-=======
 				logService.logActivity("FAILURE", "Invalid message format in request payload",
->>>>>>> 0baeca5 (Reconnect project)
 						startTime);
 				return ResponseEntity.badRequest().body(Map.of("success", false, "error", "Invalid message format"));
 			}
@@ -62,11 +58,7 @@ public class JsonLogController {
 		} catch (Exception e) {
 			e.printStackTrace();
 
-<<<<<<< HEAD
-			logService.logActivity(null, "CREATE_JSON_LOG", "FAILURE",
-=======
 			logService.logActivity("FAILURE",
->>>>>>> 0baeca5 (Reconnect project)
 					"Error occurred while saving JSON logs: " + e.getMessage(), startTime);
 
 			return ResponseEntity.internalServerError()
@@ -84,11 +76,7 @@ public class JsonLogController {
 
 			logs.sort(Comparator.comparing((JsonLog log) -> log.getDate() + " " + log.getTime()).reversed());
 
-<<<<<<< HEAD
-			logService.logActivity(null, "GET_JSON_LOGS", "SUCCESS",
-=======
 			logService.logActivity("SUCCESS",
->>>>>>> 0baeca5 (Reconnect project)
 					"Fetched " + logs.size() + " logs (from=" + from + ", to=" + to + ")", startTime);
 
 			return ResponseEntity.ok(Map.of("success", true, "logs", logs));
@@ -96,11 +84,7 @@ public class JsonLogController {
 		} catch (Exception e) {
 			e.printStackTrace();
 
-<<<<<<< HEAD
-			logService.logActivity(null, "GET_JSON_LOGS", "FAILURE", "Error fetching logs: " + e.getMessage(),
-=======
 			logService.logActivity("FAILURE", "Error fetching logs: " + e.getMessage(),
->>>>>>> 0baeca5 (Reconnect project)
 					startTime);
 
 			return ResponseEntity.internalServerError()

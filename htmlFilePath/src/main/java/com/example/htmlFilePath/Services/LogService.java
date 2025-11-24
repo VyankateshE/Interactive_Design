@@ -14,11 +14,7 @@ public class LogService {
 	@Autowired
 	private LogBookRepo logBookRepo;
 
-<<<<<<< HEAD
-	public void logActivity(Integer userId, String typeRequested, String result, String message, Date startTime) {
-=======
 	public void logActivity(String result, String message, Date startTime) {
->>>>>>> 0baeca5 (Reconnect project)
 		try {
 			LogData info = new LogData();
 			info.setResult(result);

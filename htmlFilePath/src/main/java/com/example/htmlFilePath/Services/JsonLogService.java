@@ -20,11 +20,7 @@ public class JsonLogService {
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
 	public synchronized List<JsonLog> saveLogs(List<String> messages, String level) throws IOException {
-<<<<<<< HEAD
-		LocalDate today = LocalDate.now();
-=======
 		LocalDate today = LocalDate.now().plusDays(2);
->>>>>>> 0baeca5 (Reconnect project)
 		String dateStr = today.toString();
 
 		File dir = new File(LOG_DIR);

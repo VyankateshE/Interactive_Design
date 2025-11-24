@@ -136,10 +136,8 @@ public class HtmlToDocRtfService {
 
 }
 
-<<<<<<< HEAD
 
 
-=======
 //public byte[] convertHtmlToRtf(InputStream htmlInputStream) throws Exception {
 //String html = new String(htmlInputStream.readAllBytes(), StandardCharsets.UTF_8);
 //String processedHtml = preprocessHtmlForRtf(html);
@@ -388,4 +386,3 @@ public class HtmlToDocRtfService {
 //  doc.select("link[rel=stylesheet]").remove();
 //  return doc.outerHtml();
 //}
->>>>>>> 0baeca5 (Reconnect project)

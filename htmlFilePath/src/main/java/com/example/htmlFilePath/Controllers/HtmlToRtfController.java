@@ -32,40 +32,24 @@ public class HtmlToRtfController {
 		try {
 			if (file == null || file.isEmpty()) {
 				String msg = "No file provided or file is empty.";
-<<<<<<< HEAD
-				logService.logActivity(null, "HTML_TO_DOC", "FAILURE", msg, startTime);
-=======
 				logService.logActivity("FAILURE", msg, startTime);
->>>>>>> 0baeca5 (Reconnect project)
 				return ResponseEntity.badRequest().body(msg);
 			}
 
 			byte[] docBytes = htmlToRtfService.convertHtmlToDoc(file.getInputStream());
 
-<<<<<<< HEAD
-			logService.logActivity(null, "HTML_TO_DOC", "SUCCESS", "File converted successfully: " + randomFileName,
-=======
 			logService.logActivity("SUCCESS", "File converted successfully: " + randomFileName,
->>>>>>> 0baeca5 (Reconnect project)
 					startTime);
 
 			return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + randomFileName)
 					.contentType(MediaType.parseMediaType("application/msword")).body(docBytes);
 
 		} catch (IllegalArgumentException e) {
-<<<<<<< HEAD
-			logService.logActivity(null, "HTML_TO_DOC", "FAILURE", "Invalid input: " + e.getMessage(), startTime);
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid input: " + e.getMessage());
-
-		} catch (Exception e) {
-			logService.logActivity(null, "HTML_TO_DOC", "FAILURE", "Error converting HTML to DOC: " + e.getMessage(),
-=======
 			logService.logActivity("FAILURE", "Invalid input: " + e.getMessage(), startTime);
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid input: " + e.getMessage());
 
 		} catch (Exception e) {
 			logService.logActivity("FAILURE", "Error converting HTML to DOC: " + e.getMessage(),
->>>>>>> 0baeca5 (Reconnect project)
 					startTime);
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -81,39 +65,23 @@ public class HtmlToRtfController {
 		try {
 			if (file == null || file.isEmpty()) {
 				String msg = "No file provided or file is empty.";
-<<<<<<< HEAD
-				logService.logActivity(null, "HTML_TO_RTF", "FAILURE", msg, startTime);
-=======
 				logService.logActivity("FAILURE", msg, startTime);
->>>>>>> 0baeca5 (Reconnect project)
 				return ResponseEntity.badRequest().body(msg);
 			}
 
 			byte[] rtfBytes = htmlToRtfService.convertHtmlToRtf(file.getInputStream());
 
-<<<<<<< HEAD
-			logService.logActivity(null, "HTML_TO_RTF", "SUCCESS", "File converted to RTF successfully", startTime);
-=======
 			logService.logActivity("SUCCESS", "File converted to RTF successfully", startTime);
->>>>>>> 0baeca5 (Reconnect project)
 
 			return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + randomFileName)
 					.contentType(MediaType.parseMediaType("application/rtf")).body(rtfBytes);
 
 		} catch (IllegalArgumentException e) {
-<<<<<<< HEAD
-			logService.logActivity(null, "HTML_TO_RTF", "FAILURE", "Invalid input: " + e.getMessage(), startTime);
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid input: " + e.getMessage());
-
-		} catch (Exception e) {
-			logService.logActivity(null, "HTML_TO_RTF", "FAILURE", "Error converting HTML to RTF: " + e.getMessage(),
-=======
 			logService.logActivity("FAILURE", "Invalid input: " + e.getMessage(), startTime);
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid input: " + e.getMessage());
 
 		} catch (Exception e) {
 			logService.logActivity("FAILURE", "Error converting HTML to RTF: " + e.getMessage(),
->>>>>>> 0baeca5 (Reconnect project)
 					startTime);
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
